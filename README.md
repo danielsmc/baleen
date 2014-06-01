@@ -1,4 +1,4 @@
-Baleen casts a wide net for interesting links on twitter. It follows the people that the people you follow follow, and shows you the stories that everyone's talking about. There will be a web interface, but it's not built yet. I hope you like reading JSON.
+Baleen casts a wide net for interesting links on twitter. It follows the people that the people you follow follow, and shows you the stories that everyone's talking about.
 
 This project owes a major conceptual debt to the Nieman Journalism Lab's [Fuego](http://www.niemanlab.org/2013/07/introducing-openfuego-your-very-own-heat-seeking-twitter-bot/).
 
@@ -24,3 +24,7 @@ Installation steps:
     load_impact will take quite a while (~1 minute for every account you follow on twitter)
 
     $ nohup python -u forever.py &
+
+    Now you're collecting tweets. Add upload_top.py to crontab (make sure to use the virtualenv python) and use an output filepath that gets served to the web.
+
+    You're done!

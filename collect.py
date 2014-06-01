@@ -84,8 +84,10 @@ def html_escape(text): # It's possible that twitter already escapes these, so we
 def expand_text(tweet):
     expanded_text = html_escape(tweet['text'])
     for url in tweet['entities']['urls']:
-        link_text = '<a href="%s">%s</a>'%(url['expanded_url'],html_escape(url['display_url']))
-        expanded_text=expanded_text.replace(url['url'],link_text)
+        resolved_url = resolver.resolve(url['url']) # resolver cache means this doesn't cost anything
+        if resolved_url is not None:
+            link_text = '<a href="%s">%s</a>'%(resolved_url,get_domain(resolved_url))
+            expanded_text=expanded_text.replace(url['url'],link_text)
     return expanded_text
 
 def insert_tweet(tweet):

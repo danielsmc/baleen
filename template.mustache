@@ -64,7 +64,7 @@ body, div {
 				</a>
 			</div>
 			<div class="tweet-text-block">
-				<span class="tweet-screen-name">@{{top_tweet.screen_name}}</span> {{{top_tweet.expanded_text}}}
+				<span class="tweet-screen-name">@{{top_tweet.screen_name}}</span> {{{top_tweet.expanded_text}}} ({{top_tweet.total_impact}})
 			</div>
 		</div>
 		<div class="more-tweets">
@@ -76,7 +76,7 @@ body, div {
 					</a>
 				</div>
 				<div class="tweet-text-block">
-					<span class="tweet-screen-name">@{{screen_name}}</span> {{{expanded_text}}}
+					<span class="tweet-screen-name">@{{screen_name}}</span> {{{expanded_text}}} ({{total_impact}})
 				</div>
 			</div>
 		{{/more_tweets}}

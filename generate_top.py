@@ -29,7 +29,7 @@ def generate_top(window_tweets = 3000,headlines_count = 20):
     out = []
     for url_row in cur.fetchall():
         window_minutes = max(window_minutes,int(url_row['window']))
-        cur.execute("""select tweet_id, expanded_text, screen_name, profile_image_url,total_impact, created_at from
+        cur.execute("""select tweet_id, expanded_text, screen_name, profile_image_url, media_url, total_impact, created_at from
             (SELECT tweet_id, sum(impact) as total_impact FROM tweet_urls JOIN retweets USING(tweet_id) JOIN users USING(user_id)
                 WHERE url_hash = %s
                 group by tweet_id order by total_impact desc) as a

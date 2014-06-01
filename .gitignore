@@ -1,2 +1,4 @@
 ve
 config.json
+web/index.html
+*.pyc

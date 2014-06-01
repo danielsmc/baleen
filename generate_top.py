@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import datetime
 import json
 import MySQLdb
 import MySQLdb.cursors
@@ -31,8 +32,9 @@ def generate_top(window_minutes = 2*60,headlines_count = 10):
                 WHERE created_at > DATE_SUB(NOW(),INTERVAL %s MINUTE) and url_hash = %s
                 group by tweet_id order by total_impact desc) as a
             join tweets using(tweet_id) join users using(user_id)""",(window_minutes,url_row['url_hash']))
-        out.append({'url':url_row['url'],'tweets':cur.fetchall()})
-    return out
+        all_tweets = cur.fetchall()
+        out.append({'url':url_row['url'],'top_tweet':all_tweets[0],'more_tweets':all_tweets[1:]})
+    return {'top':out,'meta':{'last_updated':datetime.datetime.utcnow().isoformat()[:19]+"Z"}}
 
 if __name__ == "__main__":
     print json.dumps(generate_top())

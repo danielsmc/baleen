@@ -33,6 +33,11 @@ body, div {
 	font-style: italic;
 }
 
+.meta {
+	color:gray;
+	text-align: right;
+}
+
 </style>
 </head>
 <body>
@@ -46,6 +51,30 @@ body, div {
 	<div class="tweet-text-block"><span class="tweet-screen-name">@{{top_tweet.screen_name}}</span> {{{top_tweet.expanded_text}}}</div>
 	</div>
 	{{/top}}
-	<div class="meta">Last Updated: <span id="last-updated" data-timestamp="{{meta.last_updated}}">{{meta.last_updated}}</span></div>
+	<div class="meta">Last updated <span id="last-updated" data-timestamp="{{meta.last_updated}}">at {{meta.last_updated}}</span></div>
+<script>
+function seconds_to_phrase(s) {
+	if (s>60*60) {
+		return "hours ago";
+	} else if (s > 60) {
+		return Math.round(s/60).toString() + " minutes ago";
+	} else if (s > 0) {
+		return Math.round(s).toString() + " seconds ago";
+	} else {
+		return "in the mysterious future!";
+	}
+};
+
+function relativizeLastUpdated() {
+	var elem = document.getElementById("last-updated");
+	var now_date = new Date();
+	var updated_date = new Date(elem.dataset.timestamp);
+	var seconds_old = (now_date-updated_date)/1000;
+
+	elem.innerHTML = seconds_to_phrase(seconds_old);
+};
+
+relativizeLastUpdated();
+</script>
 </body>
 </html>

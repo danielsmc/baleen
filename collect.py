@@ -78,10 +78,13 @@ def insert_retweet(tweet):
         tweet_id = tweet['id']
     cur.execute("INSERT IGNORE INTO retweets (user_id,tweet_id,created_at) VALUES (%s,%s,%s)",(tweet['user']['id'],tweet_id,parse_created_at(tweet)))
 
+def html_escape(text): #
+    return text.replace('<', '&lt;').replace('>', '&gt;')
+
 def expand_text(tweet):
-    expanded_text = tweet['text']
+    expanded_text = html_escape(tweet['text'])
     for url in tweet['entities']['urls']:
-        link_text = '<a href="%s">%s</a>'%(url['expanded_url'],url['display_url'])
+        link_text = '<a href="%s">%s</a>'%(url['expanded_url'],html_escape(url['display_url']))
         expanded_text=expanded_text.replace(url['url'],link_text)
     return expanded_text
 

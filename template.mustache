@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name=viewport content="width=device-width, initial-scale=1">
-<title>Baleen Headlines</title>
+<title>Headlines | Baleen</title>
 <style>
 body, div {
 	margin: 0;
@@ -14,7 +14,7 @@ body, div {
 }
 
 .tweet {
-	margin-bottom: 0.75em;
+	padding-top: 0.75em;
 	border-bottom: 1px #eee solid;
 	padding-bottom:0.25em;
 	overflow:hidden;
@@ -23,7 +23,6 @@ body, div {
 
 .tweet-profile-image {
 	float:left;
-	/*margin-right:0.5em;*/
 }
 
 .tweet-text-block {
@@ -40,7 +39,11 @@ body, div {
 	display: none;
 }
 
-.more-tweets-active {
+.story-active {
+	background-color: #FCFBF7;
+}
+
+.story-active .more-tweets{
 	display: block;
 }
 
@@ -116,7 +119,13 @@ function relativizeLastUpdated() {
 relativizeLastUpdated();
 
 function toggleSubtweets(e) {
-	this.getElementsByClassName("more-tweets")[0].classList.toggle("more-tweets-active");
+	var active_story = document.getElementsByClassName("story-active")[0];
+	if (active_story) {
+		active_story.classList.remove("story-active");
+	}
+	if (active_story != this) {
+		this.classList.add("story-active");
+	}
 	Array.prototype.forEach.call(this.getElementsByClassName("subtweet-img"),
 		function(i) {
 			i.setAttribute("src",i.dataset.src);

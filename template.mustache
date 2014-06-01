@@ -46,6 +46,12 @@ a:visited {
 	font-style: italic;
 }
 
+.tweet-timestamp {
+	color:gray;
+	font-size: 0.8em;
+	font-style:italic;
+}
+
 .more-tweets {
 	/*margin-left:15px;*/
 	display: none;
@@ -79,6 +85,7 @@ a:visited {
 			<div class="tweet-text-block">
 				<span class="tweet-screen-name">@{{top_tweet.screen_name}}</span>
 				{{{top_tweet.expanded_text}}}
+				<span class="relativize tweet-timestamp" data-timestamp="{{top_tweet.created_at}}">{{top_tweet.created_at}}</span>
 			</div>
 		</div>
 		<div class="more-tweets">
@@ -92,40 +99,46 @@ a:visited {
 				<div class="tweet-text-block">
 					<span class="tweet-screen-name">@{{screen_name}}</span>
 					{{{expanded_text}}}
+					<span class="relativize tweet-timestamp" data-timestamp="{{created_at}}">{{created_at}}</span>
 				</div>
 			</div>
 		{{/more_tweets}}
 		</div>
 	</div>
 	{{/top}}
-	<div class="meta">Last updated <span id="last-updated" data-timestamp="{{meta.last_updated}}">at {{meta.last_updated}}</span></div>
+	<div class="meta">Last updated <span id="last-updated" class="relativize" data-timestamp="{{meta.last_updated}}">at {{meta.last_updated}}</span></div>
 	<div class="meta">Window is {{meta.window_minutes}} minutes long.</div>
 	</div>
 <script>
-function number_string(n) {
+function number_string(n,unit) {
 	n = Math.round(n);
+	var numstr;
 	if (n < 10) {
-		return ["zero","one","two","three","four","five","six","seven","eight","nine"][n];
+		numstr = ["zero","one","two","three","four","five","six","seven","eight","nine"][n];
 	} else {
-		return n.toString()
+		numstr = n.toString()
 	}
+	if (n>1) {
+		unit += "s";
+	}
+	return numstr + " " + unit + " ago"
 }
 
 function seconds_to_phrase(s) {
 	if (s>60*60) {
-		return "hours ago";
+		var hours_ago = Math.round(s/(60*60));
+		return number_string(hours_ago,"hour");
 	} else if (s > 60) {
 		var minutes_ago = Math.round(s/60);
-		return number_string(minutes_ago) + (minutes_ago > 1 ? " minutes ago" : " minute ago");
+		return number_string(minutes_ago,"minute");
 	} else if (s > 0) {
-		return number_string(s) + " seconds ago";
+		return number_string(s,"second");
 	} else {
 		return "in the mysterious future!";
 	}
 };
 
-function relativizeLastUpdated() {
-	var elem = document.getElementById("last-updated");
+function relativize(elem) {
 	var now_date = new Date();
 	var updated_date = new Date(elem.dataset.timestamp);
 	var seconds_old = (now_date-updated_date)/1000;
@@ -133,7 +146,7 @@ function relativizeLastUpdated() {
 	elem.innerHTML = seconds_to_phrase(seconds_old);
 };
 
-relativizeLastUpdated();
+Array.prototype.forEach.call(document.getElementsByClassName("relativize"), relativize);
 
 function storyScroll(story) {
 	var elem = story.getElementsByClassName("tweet")[0];

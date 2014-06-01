@@ -29,14 +29,15 @@ def generate_top(window_tweets = 3000,headlines_count = 20):
     out = []
     for url_row in cur.fetchall():
         window_minutes = max(window_minutes,int(url_row['window']))
-        cur.execute("""select tweet_id, expanded_text, screen_name, profile_image_url,total_impact from
+        cur.execute("""select tweet_id, expanded_text, screen_name, profile_image_url,total_impact, created_at from
             (SELECT tweet_id, sum(impact) as total_impact FROM tweet_urls JOIN retweets USING(tweet_id) JOIN users USING(user_id)
-                WHERE created_at > DATE_SUB(NOW(),INTERVAL %s MINUTE) and url_hash = %s
+                WHERE url_hash = %s
                 group by tweet_id order by total_impact desc) as a
-            join tweets using(tweet_id) join users using(user_id)""",(window_minutes,url_row['url_hash']))
+            join tweets using(tweet_id) join users using(user_id)""",(url_row['url_hash'],))
         all_tweets = cur.fetchall()
         for t in all_tweets:
             t['total_impact'] = int(t['total_impact'])
+            t['created_at'] = t['created_at'].isoformat()+"Z"
         out.append({'url':url_row['url'],'top_tweet':all_tweets[0],'more_tweets':all_tweets[1:]})
     return {'top':out,'meta':{'last_updated':datetime.datetime.utcnow().isoformat()[:19]+"Z","window_minutes":window_minutes}}
 

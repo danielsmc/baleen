@@ -13,6 +13,11 @@ body, div {
 	font-family: Helvetica, sans-serif;
 }
 
+.content {
+	max-width:40em;
+	margin: auto;
+}
+
 .tweet {
 	padding-top: 0.75em;
 	border-bottom: 1px #eee solid;
@@ -62,6 +67,7 @@ a:visited {
 </style>
 </head>
 <body>
+	<div class="content">
 	{{#top}}
 	<div class="story">
 		<div class="tweet">
@@ -94,6 +100,7 @@ a:visited {
 	{{/top}}
 	<div class="meta">Last updated <span id="last-updated" data-timestamp="{{meta.last_updated}}">at {{meta.last_updated}}</span></div>
 	<div class="meta">Window is {{meta.window_minutes}} minutes long.</div>
+	</div>
 <script>
 function number_string(n) {
 	n = Math.round(n);

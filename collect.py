@@ -44,7 +44,7 @@ class UrlResolver:
                 final_url = req.url
                 if 'content-type' in req.headers:
                     if req.headers['content-type'].startswith("text/html"):
-                        canonical = etree.HTML(req.text).find("head/link[@rel='canonical']")
+                        canonical = etree.HTML(req.content).find("head/link[@rel='canonical']")
                         final_url = urlparse.urljoin(req.url,canonical.get('href') if canonical is not None else None)
                     else:
                         print req.headers['content-type'], final_url

@@ -26,6 +26,7 @@ def strip_tracking_tags(in_url):
         return True
     exploded = list(urlparse.urlparse(in_url))
     exploded[4] = urlencode(filter(isntTrackTag,urlparse.parse_qsl(exploded[4])))
+    exploded[5] = '' # Zap fragments. Nobody uses hashbang urls anymore, right?
     return urlparse.urlunparse(exploded)
 
 def get_domain(in_url):

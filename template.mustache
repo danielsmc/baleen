@@ -53,6 +53,10 @@ a:visited {
 	display:inline-block;
 }
 
+.media-image {
+	padding-top:0.25em;
+}
+
 .more-tweets {
 	/*margin-left:15px;*/
 	display: none;
@@ -87,6 +91,9 @@ a:visited {
 				<span class="tweet-screen-name">@{{top_tweet.screen_name}}</span>
 				{{{top_tweet.expanded_text}}}
 				<span class="relativize tweet-timestamp" data-timestamp="{{top_tweet.created_at}}">{{top_tweet.created_at}}</span>
+				{{#top_tweet.media_url}}
+				<img src="{{top_tweet.media_url}}" width="100%" class="media-image">
+				{{/top_tweet.media_url}}
 			</div>
 		</div>
 		<div class="more-tweets">
@@ -101,6 +108,9 @@ a:visited {
 					<span class="tweet-screen-name">@{{screen_name}}</span>
 					{{{expanded_text}}}
 					<span class="relativize tweet-timestamp" data-timestamp="{{created_at}}">{{created_at}}</span>
+					{{#media_url}}
+					<img src="{{media_url}}" width="100%" class="media-image">
+					{{/media_url}}
 				</div>
 			</div>
 		{{/more_tweets}}

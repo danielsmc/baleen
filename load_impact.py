@@ -64,7 +64,7 @@ def get_screen_names(ids):
 # with open('friend_cache.json') as fh:
 #     friend_cache = json.load(fh)
 
-seeds = get_screen_names(get_friends(config['seed']))
+seeds = get_screen_names(get_friends(config['twitter']['seed']))
 
 impacts = collections.Counter()
 for seed in seeds:

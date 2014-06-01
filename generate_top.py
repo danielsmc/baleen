@@ -28,7 +28,7 @@ cur.execute("""select url, url_hash, sum(impact) as total_impact from
 
 out = []
 for url_row in cur.fetchall():
-    cur.execute("""select tweet_id, text, screen_name, profile_image_url from
+    cur.execute("""select tweet_id, expanded_text, screen_name, profile_image_url from
         (SELECT tweet_id, sum(impact) as total_impact FROM tweet_urls JOIN retweets USING(tweet_id) JOIN users USING(user_id)
             WHERE created_at > DATE_SUB(NOW(),INTERVAL %s MINUTE) and url_hash = %s
             group by tweet_id order by total_impact desc) as a

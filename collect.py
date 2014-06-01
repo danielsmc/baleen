@@ -78,7 +78,7 @@ def insert_retweet(tweet):
         tweet_id = tweet['id']
     cur.execute("INSERT IGNORE INTO retweets (user_id,tweet_id,created_at) VALUES (%s,%s,%s)",(tweet['user']['id'],tweet_id,parse_created_at(tweet)))
 
-def html_escape(text): #
+def html_escape(text): # It's possible that twitter already escapes these, so we don't need to do this
     return text.replace('<', '&lt;').replace('>', '&gt;')
 
 def expand_text(tweet):

@@ -68,7 +68,7 @@ body, div {
 			<div class="tweet">
 				<div  class="tweet-profile-image">
 					<a href="https://twitter.com/{{screen_name}}/statuses/{{tweet_id}}">
-						<img src="{{profile_image_url}}" width=48 height=48>
+						<img data-src="{{profile_image_url}}" class="subtweet-img" width=48 height=48>
 					</a>
 				</div>
 				<div class="tweet-text-block">
@@ -116,6 +116,10 @@ relativizeLastUpdated();
 
 function toggleSubtweets(e) {
 	this.getElementsByClassName("more-tweets")[0].classList.toggle("more-tweets-active");
+	Array.prototype.forEach.call(this.getElementsByClassName("subtweet-img"),
+		function(i) {
+			i.setAttribute("src",i.dataset.src);
+		});
 }
 
 Array.prototype.forEach.call(document.getElementsByClassName("story"), 

@@ -41,17 +41,17 @@ def rate_limited_friend_call(screen_name,cursor):
 
 
 def get_friends(screen_name):
-    if screen_name in friend_cache:
-        return friend_cache[screen_name]
-    else:
-        all_ids = []
-        cursor = -1
-        while (cursor != 0):
-            response = rate_limited_friend_call(screen_name,cursor)
-            all_ids.extend(response['ids'])
-            cursor = response['next_cursor']
-        # friend_cache[screen_name] = all_ids
-        return all_ids
+    # if screen_name in friend_cache:
+    #     return friend_cache[screen_name]
+    # else:
+    all_ids = []
+    cursor = -1
+    while (cursor != 0):
+        response = rate_limited_friend_call(screen_name,cursor)
+        all_ids.extend(response['ids'])
+        cursor = response['next_cursor']
+    # friend_cache[screen_name] = all_ids
+    return all_ids
 
 def get_screen_names(ids):
     out  = []

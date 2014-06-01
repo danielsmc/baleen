@@ -101,7 +101,7 @@ a:visited {
 			<div class="tweet">
 				<div  class="tweet-profile-image">
 					<a href="https://twitter.com/{{screen_name}}/statuses/{{tweet_id}}">
-						<img data-src="{{profile_image_url}}" class="subtweet-img" width=48 height=48>
+						<img data-src="{{profile_image_url}}" width=48 height=48>
 					</a>
 				</div>
 				<div class="tweet-text-block">
@@ -109,7 +109,7 @@ a:visited {
 					{{{expanded_text}}}
 					<span class="relativize tweet-timestamp" data-timestamp="{{created_at}}">{{created_at}}</span>
 					{{#media_url}}
-					<img src="{{media_url}}" width="100%" class="media-image">
+					<img data-src="{{media_url}}" width="100%" class="media-image">
 					{{/media_url}}
 				</div>
 			</div>
@@ -179,9 +179,11 @@ function toggleSubtweets(e) {
 	} else {
 		storyScroll(active_story);
 	}
-	Array.prototype.forEach.call(this.getElementsByClassName("subtweet-img"),
+	Array.prototype.forEach.call(this.getElementsByTagName("img"),
 		function(i) {
-			i.setAttribute("src",i.dataset.src);
+			if (!i.getAttribute("src")) {
+				i.setAttribute("src",i.dataset.src);
+			}
 		});
 }
 

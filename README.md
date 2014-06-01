@@ -4,11 +4,14 @@ This project owes a major conceptual debt to the Nieman Journalism Lab's [Fuego]
 
 Installation steps:
 
-	Install packages for: python27, mysql, libxml2, libxslt
+	Install packages for: python27, mysql, libxml2, libxslt (and git to pull down the repo)
+	For ubuntu 14:
+	$ sudo apt-get install -y mysql-server libmysqlclient-dev git python-pip python-dev libxml2-dev libxslt1-dev
+	$ sudo pip install virtualenv
 
     $ virtualenv ve
     $ . ve/bin/activate
-    $ pip -r requirements.txt
+    $ pip install -r requirements.txt
 
     In mysql, create a user and db
 

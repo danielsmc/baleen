@@ -53,13 +53,23 @@ body, div {
 	{{/top}}
 	<div class="meta">Last updated <span id="last-updated" data-timestamp="{{meta.last_updated}}">at {{meta.last_updated}}</span></div>
 <script>
+function number_string(n) {
+	n = Math.round(n);
+	if (n < 10) {
+		return ["zero","one","two","three","four","five","six","seven","eight","nine"][n];
+	} else {
+		return n.toString()
+	}
+}
+
 function seconds_to_phrase(s) {
 	if (s>60*60) {
 		return "hours ago";
 	} else if (s > 60) {
-		return Math.round(s/60).toString() + " minutes ago";
+		var minutes_ago = Math.round(s/60);
+		return number_string(minutes_ago) + (minutes_ago > 1 ? " minutes ago" : " minute ago");
 	} else if (s > 0) {
-		return Math.round(s).toString() + " seconds ago";
+		return number_string(s) + " seconds ago";
 	} else {
 		return "in the mysterious future!";
 	}

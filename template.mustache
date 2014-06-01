@@ -135,6 +135,15 @@ function relativizeLastUpdated() {
 
 relativizeLastUpdated();
 
+function storyScroll(story) {
+	var elem = story.getElementsByClassName("tweet")[0];
+	if (elem.scrollIntoViewIfNeeded) {
+		elem.scrollIntoViewIfNeeded()
+	} else {
+		elem.scrollIntoView(true)
+	}
+}
+
 function toggleSubtweets(e) {
 	var active_story = document.getElementsByClassName("story-active")[0];
 	if (active_story) {
@@ -142,9 +151,9 @@ function toggleSubtweets(e) {
 	}
 	if (active_story != this) {
 		this.classList.add("story-active");
-		this.scrollIntoView(true);
+		storyScroll(this);
 	} else {
-		active_story.scrollIntoView(true);
+		storyScroll(active_story);
 	}
 	Array.prototype.forEach.call(this.getElementsByClassName("subtweet-img"),
 		function(i) {

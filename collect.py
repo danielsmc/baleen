@@ -89,7 +89,7 @@ def expand_text(tweet):
         if resolved_url is not None:
             link_text = '<a href="%s">%s</a>'%(resolved_url,get_domain(resolved_url))
             expanded_text=expanded_text.replace(url['url'],link_text)
-    for media in tweet['entities']['media']:
+    for media in tweet['entities'].get('media',[]):
         expanded_text=expanded_text.replace(media['url'],"")
     return expanded_text
 
@@ -98,7 +98,7 @@ def insert_tweet(tweet):
     expanded_text = expand_text(tweet)
     created_at = parse_created_at(tweet)
     user_id = tweet['user']['id']
-    if len(tweet['entities']['media']) > 0:
+    if len(tweet['entities'].get('media',[])) > 0:
         media_url = tweet['entities']['media'][0]['media_url']
     else:
         media_url = None

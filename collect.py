@@ -89,15 +89,20 @@ def expand_text(tweet):
         if resolved_url is not None:
             link_text = '<a href="%s">%s</a>'%(resolved_url,get_domain(resolved_url))
             expanded_text=expanded_text.replace(url['url'],link_text)
+    for media in tweet['entities']['media']:
+        expanded_text=expanded_text.replace(media['url'],"")
     return expanded_text
 
 def insert_tweet(tweet):
     tweet_id = tweet['id']
-    text = tweet['text']
     expanded_text = expand_text(tweet)
     created_at = parse_created_at(tweet)
     user_id = tweet['user']['id']
-    cur.execute("INSERT IGNORE INTO tweets (tweet_id,text,created_at,user_id,expanded_text) VALUES (%s,%s,%s,%s,%s)", (tweet_id,text,created_at,user_id,expanded_text))
+    if len(tweet['entities']['media']) > 0:
+        media_url = tweet['entities']['media'][0]['media_url']
+    else:
+        media_url = None
+    cur.execute("INSERT IGNORE INTO tweets (tweet_id,created_at,user_id,expanded_text,media_url) VALUES (%s,%s,%s,%s,%s)", (tweet_id,created_at,user_id,expanded_text,media_url))
 
 def insert_links(tweet):
     for url in tweet['entities']['urls']:

@@ -22,10 +22,11 @@ DROP TABLE IF EXISTS `tweets`;
 
 CREATE TABLE `tweets` (
   `tweet_id` bigint(11) unsigned NOT NULL,
-  `text` text CHARACTER SET utf8mb4 NOT NULL,
+  `text` text CHARACTER SET utf8mb4,
   `created_at` datetime NOT NULL,
   `user_id` bigint(20) NOT NULL,
   `expanded_text` text CHARACTER SET utf8mb4,
+  `media_url` text,
   PRIMARY KEY (`tweet_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

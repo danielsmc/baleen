@@ -35,12 +35,12 @@ body, div {
 }
 
 .more-tweets {
-	margin-left:15px;
+	/*margin-left:15px;*/
 	display: none;
 }
 
 .story-active {
-	background-color: #FCFBF7;
+	background-color: #F7EBCD;
 }
 
 .story-active .more-tweets{
@@ -125,6 +125,9 @@ function toggleSubtweets(e) {
 	}
 	if (active_story != this) {
 		this.classList.add("story-active");
+		this.scrollIntoView(true);
+	} else {
+		active_story.scrollIntoView(true);
 	}
 	Array.prototype.forEach.call(this.getElementsByClassName("subtweet-img"),
 		function(i) {

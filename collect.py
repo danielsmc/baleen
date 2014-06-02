@@ -91,6 +91,7 @@ def expand_text(tweet):
             expanded_text=expanded_text.replace(url['url'],link_text)
     for media in tweet['entities'].get('media',[]):
         expanded_text=expanded_text.replace(media['url'],"")
+    expanded_text=expanded_text.replace("\n","<br>")
     return expanded_text
 
 def insert_tweet(tweet):

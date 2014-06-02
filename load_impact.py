@@ -19,6 +19,7 @@ t = twitter.Twitter(auth=auth)
 
 conn = MySQLdb.connect(
     host=config['mysql']['host'],
+    port=config['mysql']['port'],
     user=config['mysql']['user'],
     passwd=config['mysql']['passwd'],
     db=config['mysql']['database'],

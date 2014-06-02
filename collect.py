@@ -119,6 +119,7 @@ with open("config.json") as fh:
 
 conn = MySQLdb.connect(
     host=config['mysql']['host'],
+    port=config['mysql']['port'],
     user=config['mysql']['user'],
     passwd=config['mysql']['passwd'],
     db=config['mysql']['database'],

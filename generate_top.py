@@ -11,6 +11,7 @@ def generate_top(window_tweets = 3000,headlines_count = 20):
 
     conn = MySQLdb.connect(
         host=config['mysql']['host'],
+        port=config['mysql']['port'],
         user=config['mysql']['user'],
         passwd=config['mysql']['passwd'],
         db=config['mysql']['database'],

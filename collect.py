@@ -69,7 +69,7 @@ def parse_created_at(tweet):
 def insert_user(user):
     user_id = user['id']
     screen_name = user['screen_name']
-    profile_image_url = user['profile_image_url']
+    profile_image_url = user['profile_image_url_https']
     cur.execute("INSERT INTO users (user_id,screen_name,profile_image_url) VALUES (%s,%s,%s) ON DUPLICATE KEY UPDATE screen_name=%s, profile_image_url=%s",
         (user_id,screen_name,profile_image_url,screen_name,profile_image_url))
 
@@ -101,7 +101,7 @@ def insert_tweet(tweet):
     created_at = parse_created_at(tweet)
     user_id = tweet['user']['id']
     if len(tweet['entities'].get('media',[])) > 0:
-        media_url = tweet['entities']['media'][0]['media_url']
+        media_url = tweet['entities']['media'][0]['media_url_https']
     else:
         media_url = None
     cur.execute("INSERT IGNORE INTO tweets (tweet_id,created_at,user_id,expanded_text,media_url) VALUES (%s,%s,%s,%s,%s)", (tweet_id,created_at,user_id,expanded_text,media_url))

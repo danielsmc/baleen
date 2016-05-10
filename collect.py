@@ -41,12 +41,13 @@ class UrlResolver:
     def resolve(self,short_url):
         if short_url not in self.cache:
             try:
-                req = requests.get(short_url,allow_redirects=True,timeout=2)
+                req = requests.head(short_url,allow_redirects=True,timeout=2)
                 final_url = req.url
                 if 'content-type' in req.headers:
                     if req.headers['content-type'].startswith("text/html"):
-                        canonical = etree.HTML(req.content).find("head/link[@rel='canonical']")
-                        final_url = urlparse.urljoin(req.url,canonical.get('href') if canonical is not None else None)
+                        body_req = requests.get(final_url,timeout=2)
+                        canonical = etree.HTML(body_req.content).find("head/link[@rel='canonical']")
+                        final_url = urlparse.urljoin(final_url,canonical.get('href') if canonical is not None else None)
                     else:
                         print req.headers['content-type'], final_url
                 self.cache[short_url] = strip_tracking_tags(final_url)

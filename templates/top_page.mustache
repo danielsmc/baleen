@@ -23,6 +23,16 @@ body, div {
 	border-bottom: 1px #eee solid;
 	padding-bottom:0.25em;
 	overflow:hidden;
+	display:none;
+}
+
+.story>.tweet:first-child,
+.story-active .tweet {
+	display: block;
+}
+
+.children {
+	margin-left: 15px;
 }
 
 a {
@@ -31,6 +41,10 @@ a {
 
 a:visited {
 	color: #999;
+}
+
+.deleted {
+	text-decoration: line-through;
 }
 
 .tweet-profile-image {
@@ -57,17 +71,9 @@ a:visited {
 	padding-top:0.25em;
 }
 
-.more-tweets {
-	/*margin-left:15px;*/
-	display: none;
-}
 
 .story-active {
 	background-color: #FAFAF0;
-}
-
-.story-active .more-tweets{
-	display: block;
 }
 
 .meta {
@@ -81,44 +87,16 @@ a:visited {
 	<div class="content">
 	{{#top}}
 	<div class="story">
-		<div class="tweet">
-			<div  class="tweet-profile-image">
-				<a href="https://twitter.com/{{top_tweet.screen_name}}/statuses/{{top_tweet.tweet_id}}">
-					<img src="{{top_tweet.profile_image_url}}" width=48 height=48>
-				</a>
-			</div>
-			<div class="tweet-text-block">
-				<span class="tweet-screen-name">@{{top_tweet.screen_name}}</span>
-				{{{top_tweet.expanded_text}}}
-				<span class="relativize tweet-timestamp" data-timestamp="{{top_tweet.created_at}}">{{top_tweet.created_at}}</span>
-				{{#top_tweet.media_url}}
-				<img src="{{top_tweet.media_url}}" width="100%" class="media-image">
-				{{/top_tweet.media_url}}
-			</div>
-		</div>
-		<div class="more-tweets">
-		{{#more_tweets}}
-			<div class="tweet">
-				<div  class="tweet-profile-image">
-					<a href="https://twitter.com/{{screen_name}}/statuses/{{tweet_id}}">
-						<img data-src="{{profile_image_url}}" width=48 height=48>
-					</a>
-				</div>
-				<div class="tweet-text-block">
-					<span class="tweet-screen-name">@{{screen_name}}</span>
-					{{{expanded_text}}}
-					<span class="relativize tweet-timestamp" data-timestamp="{{created_at}}">{{created_at}}</span>
-					{{#media_url}}
-					<img data-src="{{media_url}}" width="100%" class="media-image">
-					{{/media_url}}
-				</div>
-			</div>
-		{{/more_tweets}}
-		</div>
+		{{#tweets}}
+			{{> tweet}}
+		{{/tweets}}
 	</div>
 	{{/top}}
-	<div class="meta">Last updated <span id="last-updated" class="relativize" data-timestamp="{{meta.last_updated}}">at {{meta.last_updated}}</span></div>
-	<div class="meta">Window is {{meta.window_minutes}} minutes long.</div>
+	{{#meta}}
+	<div class="meta">Last updated <span id="last-updated" class="relativize" data-timestamp="{{last_updated}}">at {{last_updated}}</span></div>
+	<div class="meta">Window is {{window_minutes}} minutes long.</div>
+	{{#expand_queue}}<div class="meta">Expand queue length: {{expand_queue}}</div>{{/expand_queue}}
+	{{/meta}}
 	</div>
 <script>
 function number_string(n,unit) {
@@ -136,17 +114,16 @@ function number_string(n,unit) {
 }
 
 function seconds_to_phrase(s) {
-	if (s>60*60) {
-		var hours_ago = Math.round(s/(60*60));
-		return number_string(hours_ago,"hour");
-	} else if (s > 60) {
-		var minutes_ago = Math.round(s/60);
-		return number_string(minutes_ago,"minute");
-	} else if (s > 0) {
-		return number_string(s,"second");
-	} else {
-		return "in the mysterious future!";
+	var units = {day:60*60*24,
+				 hour:60*60,
+				 minute:60,
+				 second:1};
+	for (var u in units) {
+		if (s>units[u]) {
+			return number_string(Math.round(s/units[u]),u);
+		}
 	}
+	return "tomorrow";
 };
 
 function relativize(elem) {
@@ -168,6 +145,14 @@ function storyScroll(story) {
 	}
 }
 
+function lazyLoad() {
+	Array.prototype.forEach.call(document.querySelectorAll(".story>.tweet:first-child img:not([src]), .story-active .tweet img:not([src])"),
+		function(i) {
+			i.setAttribute("src",i.dataset.src);
+		});
+}
+lazyLoad();
+
 function toggleSubtweets(e) {
 	var active_story = document.getElementsByClassName("story-active")[0];
 	if (active_story) {
@@ -179,12 +164,7 @@ function toggleSubtweets(e) {
 	} else {
 		storyScroll(active_story);
 	}
-	Array.prototype.forEach.call(this.getElementsByTagName("img"),
-		function(i) {
-			if (!i.getAttribute("src")) {
-				i.setAttribute("src",i.dataset.src);
-			}
-		});
+	lazyLoad();
 }
 
 Array.prototype.forEach.call(document.getElementsByClassName("story"), 

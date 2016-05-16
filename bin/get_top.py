@@ -112,6 +112,8 @@ def generateTop(windowsize,targetcount):
 
         if len(top) == TARGET_COUNT:
             break
+    for t in top:
+        t['tweets'][0]['lede']=True
     return (top,window_minutes,freshest_tweet)
 
 if len(sys.argv) < 2:

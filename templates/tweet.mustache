@@ -2,7 +2,7 @@
 <div class="tweet{{#deleted}} deleted{{/deleted}}">
 	<div  class="tweet-profile-image">
 		<a href="https://twitter.com/{{screen_name}}/statuses/{{id}}">
-			<img data-src="{{avatar}}" width=48 height=48>
+			<img {{^lede}}data-{{/lede}}src="{{avatar}}" width=48 height=48>
 		</a>
 	</div>
 	<div class="tweet-text-block">
@@ -10,7 +10,7 @@
 		{{{expanded_text}}}
 		<span class="relativize tweet-timestamp" data-timestamp="{{created_at}}">{{created_at}}</span>
 		{{#media_url}}
-		<img data-src="{{media_url}}" width="100%" class="media-image">
+		<img {{^lede}}data-{{/lede}}src="{{media_url}}" width="100%" class="media-image">
 		{{/media_url}}
 	</div>
 </div>

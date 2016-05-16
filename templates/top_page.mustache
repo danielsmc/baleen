@@ -146,12 +146,11 @@ function storyScroll(story) {
 }
 
 function lazyLoad() {
-	Array.prototype.forEach.call(document.querySelectorAll(".story>.tweet:first-child img:not([src]), .story-active .tweet img:not([src])"),
+	Array.prototype.forEach.call(document.querySelectorAll(".story-active img:not([src])"),
 		function(i) {
 			i.setAttribute("src",i.dataset.src);
 		});
 }
-lazyLoad();
 
 function toggleSubtweets(e) {
 	var active_story = document.getElementsByClassName("story-active")[0];
@@ -164,7 +163,10 @@ function toggleSubtweets(e) {
 	} else {
 		storyScroll(active_story);
 	}
-	lazyLoad();
+	Array.prototype.forEach.call(this.querySelectorAll("img:not([src])"),
+		function(i) {
+			i.setAttribute("src",i.dataset.src);
+		});
 }
 
 Array.prototype.forEach.call(document.getElementsByClassName("story"), 

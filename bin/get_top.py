@@ -28,12 +28,10 @@ def addTweetLoci(tid,uid,loci,child_tweets):
     if 'quoted_status_id' in t:
         child_tweets[('tweet',t['quoted_status_id'])].add(('tweet',tid))
         addTweetLoci(t['quoted_status_id'],uid,loci,child_tweets)
-    for u in t['entities']['urls']:
-        if not u.get("is_quote"):
-            short_url = u['expanded_url']
-            url = b.getUrl(short_url) or short_url
-            child_tweets[('url',url)].add(('tweet',tid))
-            loci[('url',url)].add(uid)
+    for u in t['urls']:
+        url = b.getUrl(u) or u
+        child_tweets[('url',url)].add(('tweet',tid))
+        loci[('url',url)].add(uid)
 
 def getOrderedChildren(targ,child_tweets,loci_scores):
     return sorted(child_tweets[targ],key=lambda x:loci_scores[x],reverse=True)
@@ -54,27 +52,14 @@ def tweetForDisplay(tid):
     t = b.getTweet(tid)
     if t is None:
         return
-    out = {
-        'id': t['id'],
-        'screen_name': t['user']['screen_name'],
-        'avatar': t['user']['profile_image_url_https'],
-        'deleted': t.get('deleted',False),
-        'created_at': snowflake2datetime(t['id']).isoformat()[:19]+"Z"
-    }
-    if len(t['entities'].get('media',[])) > 0:
-        out['media_url'] = t['entities']['media'][0]['media_url_https']
+    t['created_at'] = snowflake2datetime(t['id']).isoformat()[:19]+"Z"
     text = t['text']
-    for u in t['entities']['urls']:
-        if u.get('is_quote'):
-            text = text.replace(u['url'],"")
-        else:
-            real_url = b.getUrl(u['expanded_url']) or u['expanded_url']
-            link_text = '<a href="%s">%s</a>'%(real_url,get_domain(real_url))
-            text = text.replace(u['url'],link_text)
-    for m in t['entities'].get('media',[]):
-        text = text.replace(m['url'],"")
-    out['expanded_text'] = text
-    return out
+    for u in t['urls']:
+        real_url = b.getUrl(u) or u
+        link_text = '<a href="%s">%s</a>'%(real_url,get_domain(real_url))
+        text = text.replace(u,link_text)
+    t['expanded_text'] = text
+    return t
 
 def generateTop(windowsize,targetcount):
     follower_index = collections.defaultdict(set)

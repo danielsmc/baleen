@@ -11,6 +11,29 @@ def addRetweet(t):
     uid_baseid = "%s:%s" % (t['user']['id'],t.get('retweeted_status',t)['id'])
     b.redis.zadd('retweets',t['id'],uid_baseid)
 
+def slimTweet(t):
+    out = {
+        'id': t['id'],
+        'screen_name': t['user']['screen_name'],
+        'avatar': t['user']['profile_image_url_https']
+    }
+    if len(t['entities'].get('media',[])) > 0:
+        out['media_url'] = t['entities']['media'][0]['media_url_https']
+    text = t['text']
+    if 'quoted_status_id' in t:
+        out['quoted_status_id'] = t['quoted_status_id']
+    out['urls'] = []
+    for u in t['entities']['urls']:
+        if u.get('is_quote'):
+            text = text.replace(u['url'],"")
+        else:
+            out['urls'].append(u['expanded_url'])
+            text = text.replace(u['url'],u['expanded_url'])
+    for m in t['entities'].get('media',[]):
+        text = text.replace(m['url'],"")
+    out['text'] = text
+    return out
+
 def addTweet(t):
     if b.redis.exists("tweet:%s"%t['id']):
         return
@@ -22,7 +45,6 @@ def addTweet(t):
     if 'quoted_status_id' in t:
         if 'quoted_status' in t:
             addTweet(t['quoted_status'])
-            del t['quoted_status']
         elif not b.redis.exists("tweet:%s"%t['quoted_status_id']):
             # print("fetching quoted status")
             try:
@@ -36,7 +58,8 @@ def addTweet(t):
             u['is_quote'] = True
         else:
             b.redis.rpush("expand_queue",u['expanded_url'])
-    b.redis.set("tweet:%s"%t['id'],json.dumps(t),b.oneyear)
+    slimmed = slimTweet(t)
+    b.redis.set("tweet:%s"%t['id'],json.dumps(slimmed),b.oneyear)
 
 def markDeleted(tid):
     t = b.getTweet(tid)

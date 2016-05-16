@@ -51,8 +51,9 @@ class Baleen:
 def loopForever(func):
     sleep_time = 1
     while True:
-        print("sleeping for %s seconds"%sleep_time)
-        time.sleep(sleep_time)
+        if sleep_time > 1:
+            print("sleeping for %s seconds"%sleep_time)
+            time.sleep(sleep_time)
         try:
             func()
             sleep_time = 1

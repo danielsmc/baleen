@@ -85,6 +85,7 @@ def generateTop(windowsize,targetcount):
     retweets = [(tuple(map(int,x[0].split(b":"))),snowflake2datetime(x[1])) for x in b.redis.zrevrange('retweets',0,WINDOW_SIZE,withscores=True)]
     b.redis.zremrangebyrank('retweets',0,-WINDOW_SIZE)
 
+    freshest_tweet = retweets[0][1]
     window_minutes = int((retweets[0][1]-retweets[-1][1]).total_seconds()/60)
 
     child_tweets = collections.defaultdict(set)
@@ -111,15 +112,15 @@ def generateTop(windowsize,targetcount):
 
         if len(top) == TARGET_COUNT:
             break
-    return (top,window_minutes)
+    return (top,window_minutes,freshest_tweet)
 
 if len(sys.argv) < 2:
     print("pass an output filepath")
 else:
-    top,window_minutes = generateTop(5000,20)
+    top,window_minutes,freshest_tweet = generateTop(5000,20)
 
     out = { 'top': top,
-            'meta':{ 'last_updated':datetime.datetime.utcnow().isoformat()[:19]+"Z",
+            'meta':{ 'last_updated':freshest_tweet.isoformat()[:19]+"Z",
                      "window_minutes":window_minutes,
                      'expand_queue':b.redis.llen("expand_queue")}}
 

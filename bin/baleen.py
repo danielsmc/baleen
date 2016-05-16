@@ -3,6 +3,7 @@ import redis
 import twitter
 import os
 import sys
+import time
 import traceback
 
 
@@ -48,10 +49,15 @@ class Baleen:
             return res.decode('utf-8')
 
 def loopForever(func):
+    sleep_time = 1
     while True:
+        print("sleeping for %s seconds"%sleep_time)
+        time.sleep(sleep_time)
         try:
             func()
+            sleep_time = 1
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
+            sleep_time *= 2
             traceback.print_exc()

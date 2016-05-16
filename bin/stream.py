@@ -39,14 +39,10 @@ def addTweet(t):
     b.redis.set("tweet:%s"%t['id'],json.dumps(t),b.oneyear)
 
 def markDeleted(tid):
-    # print("deleting",tid)
-    res = b.redis.get("tweet:%s"%tid)
-    if res is None:
-        # print("which we didn't have")
-        return
-    obj = json.loads(res.decode('utf-8'))
-    obj['deleted'] = True
-    b.redis.set("tweet:%s"%tid,json.dumps(obj),b.oneyear)
+    t = b.getTweet(tid)
+    if t is not None:
+        t['deleted'] = True
+        b.redis.set("tweet:%s"%tid,json.dumps(t),b.oneyear)
 
 def getFollowList():
     follow_tree = b.getFollowGraph()

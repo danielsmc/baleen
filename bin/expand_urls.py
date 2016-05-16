@@ -17,17 +17,23 @@ def strip_tracking_tags(in_url):
     exploded[5] = '' # Zap fragments. Nobody uses hashbang urls anymore, right?
     return parse.urlunparse(exploded)
 
+request_kwargs = {
+    'allow_redirects': True,
+    'timeout': 30,
+    'headers': {'User-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/601.5.17 (KHTML, like Gecko) Version/9.1 Safari/601.5.17'}
+}
+
 def expand(short_url):
     # print("starting with",short_url)
     if b.redis.exists("url:%s"%short_url):
         return
     try:
         url = short_url
-        req = requests.head(url,allow_redirects=True,timeout=30)
+        req = requests.head(url,**request_kwargs)
         url = req.url
         try:
             if req.headers.get('content-type','').startswith("text/html"):
-                tree = html.fromstring(requests.get(url,timeout=30).content)
+                tree = html.fromstring(requests.get(url,**request_kwargs).content)
                 canonical = tree.find(".//link[@rel='canonical']")
                 if canonical is not None:
                     url = parse.urljoin(url,canonical.get('href'))

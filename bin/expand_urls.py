@@ -1,4 +1,5 @@
 import baleen
+import contextlib
 import requests
 from lxml import html
 from urllib import parse
@@ -17,39 +18,36 @@ def strip_tracking_tags(in_url):
     exploded[5] = '' # Zap fragments. Nobody uses hashbang urls anymore, right?
     return parse.urlunparse(exploded)
 
-request_kwargs = {
-    'allow_redirects': True,
-    'timeout': 30,
-    'headers': {'User-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/601.5.17 (KHTML, like Gecko) Version/9.1 Safari/601.5.17'}
-}
+def canonicalFromHtml(url,raw_html):
+    tree = html.fromstring(raw_html)
+    canonical = tree.find(".//link[@rel='canonical']")
+    if canonical is not None:
+        return parse.urljoin(url,canonical.get('href'))
+    ogurl = tree.find(".//meta[@property='og:url']")
+    if ogurl is not None:
+        return parse.urljoin(url,ogurl.get('content'))
+    return url
+
+ua_string = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/601.5.17 (KHTML, like Gecko) Version/9.1 Safari/601.5.17'
 
 def expand(short_url):
-    # print("starting with",short_url)
     if b.redis.exists("url:%s"%short_url):
         return
     try:
-        url = short_url
-        req = requests.head(url,**request_kwargs)
-        url = req.url
-        try:
-            if req.headers.get('content-type','').startswith("text/html"):
-                tree = html.fromstring(requests.get(url,**request_kwargs).content)
-                canonical = tree.find(".//link[@rel='canonical']")
-                if canonical is not None:
-                    url = parse.urljoin(url,canonical.get('href'))
-                else:
-                    ogurl = tree.find(".//meta[@property='og:url']")
-                    if ogurl is not None:
-                        url = parse.urljoin(url,ogurl.get('content'))
-        except (KeyboardInterrupt, SystemExit):
-            raise
-        except Exception as err:
-            print("expanding %s, %s (phase 2)"%(short_url,err))
-        b.redis.set("url:%s"%short_url,strip_tracking_tags(url),b.oneyear)
+        with contextlib.closing(requests.get(short_url, stream=True, timeout=30, headers={'User-agent': ua_string})) as res:
+            url = res.url
+            try:
+                if res.headers.get('content-type','').startswith("text/html"):
+                    url = canonicalFromHtml(url,res.content)
+            except (KeyboardInterrupt, SystemExit):
+                raise
+            except Exception as err:
+                print("expanding %s, %s (html parsing)"%(short_url,err))
+            b.redis.set("url:%s"%short_url,strip_tracking_tags(url),b.oneyear)
     except (KeyboardInterrupt, SystemExit):
         raise
     except Exception as err:
-        print("expanding %s, %s (phase 1)"%(short_url,err))
+        print("expanding %s, %s (fetching)"%(short_url,err))
 
 
 def mainloop():

@@ -58,6 +58,7 @@ def tweetForDisplay(tid):
         real_url = b.getUrl(u) or u
         link_text = '<a href="%s">%s</a>'%(real_url,get_domain(real_url))
         text = text.replace(u,link_text)
+    text = text.replace('\n','<br>')
     t['expanded_text'] = text
     return t
 

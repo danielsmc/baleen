@@ -27,16 +27,31 @@ class Baleen:
         self.oneyear = 60 * 60 * 24 * 365
 
     def getFollowGraph(self):
-        def fetchFriends(uid):
-            res = self.redis.get("friends:%d"%uid)
+        def makeKey(uid):
+            return "friends:%d"%uid
+        def parseRaw(res):
             return {int(x) for x in res.decode('utf-8').split(',')} if res else {}
-        seed_sn = self.config['twitter']['seed']
-        seed_uid = self.twitter.users.show(screen_name=seed_sn)['id']
+        def fetchFriends(uid):
+            return parseRaw(self.redis.get(makeKey(uid)))
+        def fetchFriendsMulti(uids):
+            uid_list = list(uids)
+            res_list = map(parseRaw,self.redis.mget(map(makeKey,uid_list)))
+            return {fid:ffriends for fid,ffriends in zip(uid_list,res_list)}
+            
+        seed_uid = self.getUserId(self.config['twitter']['seed'])
         seed_friends = fetchFriends(seed_uid)
-        out = {fid:fetchFriends(fid) for fid in seed_friends}
+        out = fetchFriendsMulti(seed_friends)
         out[seed_uid]=seed_friends
         return out
 
+    def getUserId(self,screen_name):
+        res = self.redis.get("user_id:%s"%screen_name)
+        if res is not None:
+            return int(res)
+        else:
+            uid = self.twitter.users.show(screen_name=screen_name)['id']
+            self.redis.set("user_id:%s"%screen_name,uid)
+            return uid
 
     def getTweet(self,tid):
         res = self.redis.get("tweet:%s"%tid)

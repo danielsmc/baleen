@@ -69,7 +69,6 @@ def generateTop(windowsize,targetcount):
             follower_index[follower].add(friend)
 
     retweets = [(tuple(map(int,x[0].split(b":"))),snowflake2datetime(x[1])) for x in b.redis.zrevrange('retweets',0,WINDOW_SIZE,withscores=True)]
-    b.redis.zremrangebyrank('retweets',0,-WINDOW_SIZE)
 
     freshest_tweet = retweets[0][1]
     window_minutes = int((retweets[0][1]-retweets[-1][1]).total_seconds()/60)
@@ -106,6 +105,7 @@ if len(sys.argv) < 2:
     print("pass an output filepath")
 else:
     top,window_minutes,freshest_tweet = generateTop(5000,20)
+    b.redis.zremrangebyrank('retweets',0,-10*WINDOW_SIZE)
 
     out = { 'top': top,
             'meta':{ 'last_updated':freshest_tweet.isoformat()[:19]+"Z",

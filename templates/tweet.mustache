@@ -1,7 +1,7 @@
 {{#tweet}}
 <div class="tweet{{#deleted}} deleted{{/deleted}}">
 	<div  class="tweet-profile-image">
-		<a href="https://twitter.com/{{screen_name}}/statuses/{{id}}">
+		<a href="https://twitter.com/{{screen_name}}/{{^deleted}}statuses/{{id}}{{/deleted}}">
 			<img {{^lede}}data-{{/lede}}src="{{avatar}}" width=48 height=48>
 		</a>
 	</div>

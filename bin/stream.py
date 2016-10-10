@@ -48,11 +48,15 @@ def addTweet(t):
         elif not b.redis.exists("tweet:%s"%t['quoted_status_id']):
             # print("fetching quoted status")
             try:
-                addTweet(b.twitter.statuses.show(_id=t['quoted_status_id']))
+                addTweet(b.twitter.statuses.show(_id=t['quoted_status_id'],tweet_mode='extended'))
                 # print("succeeded")
             except (twitter.api.TwitterHTTPError,urllib.error.URLError):
                 # print("failed")
                 pass
+    if 'extended_tweet' in t:
+        t.update(t['extended_tweet'])
+    if 'full_text' in t:
+        t['text'] = t['full_text']
     for u in t['entities']['urls']:
         if 'quoted_status_id' in t and u['expanded_url'].endswith(str(t['quoted_status_id'])):
             u['is_quote'] = True

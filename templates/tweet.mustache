@@ -1,0 +1,22 @@
+{{#tweet}}
+<div class="tweet{{#deleted}} deleted{{/deleted}}">
+	<div  class="tweet-profile-image">
+		<a href="https://twitter.com/{{screen_name}}/statuses/{{id}}">
+			<img {{^lede}}data-{{/lede}}src="{{avatar}}" width=48 height=48>
+		</a>
+	</div>
+	<div class="tweet-text-block">
+		<span class="tweet-screen-name">@{{screen_name}}</span>
+		{{{expanded_text}}}
+		<span class="relativize tweet-timestamp" data-timestamp="{{created_at}}">{{created_at}}</span>
+		{{#media_url}}
+		<img {{^lede}}data-{{/lede}}src="{{media_url}}" width="100%" class="media-image">
+		{{/media_url}}
+	</div>
+</div>
+{{/tweet}}
+<div class="children">
+{{#children}}
+	{{> tweet}}
+{{/children}}
+</div>

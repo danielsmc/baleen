@@ -8,8 +8,8 @@ import sys
 import tempfile
 import urllib
 
-WINDOW_SIZE = 5000
-TARGET_COUNT = 20
+WINDOW_SIZE = 10000
+TARGET_COUNT = 40
 
 b = baleen.Baleen()
 
